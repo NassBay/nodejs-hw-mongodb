@@ -20,7 +20,7 @@ const setupServer = () => {
   app.use(contactsRouter);
 
   app.get('/', (req, res) => {
-    res.status(200).json({ message: 'Welcome to the API' });
+    res.status(200).json({ message: 'Welcome to the DB' });
   });
 
   app.use(notFoundHandler);
