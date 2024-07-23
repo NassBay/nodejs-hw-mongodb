@@ -12,7 +12,7 @@ const contactSchema = new mongoose.Schema(
     },
     email: {
       type: String,
-      match: [/\S+@\S+\.\S+/, 'is invalid'], 
+      match: [/\S+@\S+\.\S+/, 'is invalid'],
     },
     isFavourite: {
       type: Boolean,
@@ -27,6 +27,7 @@ const contactSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
+    versionKey: false,
   },
 );
 
