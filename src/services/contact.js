@@ -53,3 +53,44 @@ export const deleteContactById = async (contactId) => {
     throw new Error('Error deleting contact');
   }
 };
+
+export const getContactsPaginated = async (
+  page,
+  perPage,
+  sortBy,
+  sortOrder,
+  filter,
+) => {
+  const pageNumber = parseInt(page, 10);
+  const itemsPerPage = parseInt(perPage, 10);
+
+  const skip = (pageNumber - 1) * itemsPerPage;
+
+  const sortOptions = {};
+  sortOptions[sortBy] = sortOrder === 'desc' ? -1 : 1;
+
+  const contactQuery = Contact.find();
+
+  if (filter.contactType) {
+    contactQuery.where('contactType').equals(filter.contactType);
+  }
+
+  if (filter.isFavourite !== undefined) {
+    contactQuery.where('isFavourite').equals(filter.isFavourite);
+  }
+
+  const [contacts, totalItems] = await Promise.all([
+    contactQuery.sort(sortOptions).skip(skip).limit(itemsPerPage).exec(),
+    Contact.countDocuments(contactQuery.getQuery()),
+  ]);
+
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+  return {
+    contacts,
+    totalItems,
+    totalPages,
+    hasPreviousPage: pageNumber > 1,
+    hasNextPage: pageNumber < totalPages,
+  };
+};
