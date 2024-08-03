@@ -2,7 +2,7 @@ import Contact from '../models/contact.js';
 
 export const getContactById = async (contactId) => {
   try {
-    const contact = await Contact.findById(contactId).lean(); // `lean()` for performance
+    const contact = await Contact.findById(contactId).lean(); 
     if (!contact) {
       return null;
     }
@@ -46,7 +46,7 @@ export const updateContactById = async (contactId, updateData) => {
 
 export const deleteContactById = async (contactId) => {
   try {
-    const deletedContact = await Contact.findByIdAndDelete(contactId).lean(); // `lean()` for performance
+    const deletedContact = await Contact.findByIdAndDelete(contactId).lean(); 
     return deletedContact;
   } catch (error) {
     throw new Error('Error deleting contact');

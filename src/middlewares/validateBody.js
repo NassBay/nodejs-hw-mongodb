@@ -9,7 +9,11 @@ export const validateBody = (schema) => {
         message: detail.message,
         path: detail.path,
       }));
-      return res.status(400).json({ errors });
+      return res.status(400).json({
+        status: 400,
+        message: 'BadRequest',
+        data: { errors },
+      });
     }
     next();
   };
