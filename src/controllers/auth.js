@@ -21,7 +21,7 @@ export const register = async (req, res, next) => {
       },
     });
   } catch (error) {
-    next(createHttpError(500, 'Failed to register user'));
+    next(error);
   }
 };
 
@@ -55,8 +55,10 @@ export const login = async (req, res, next) => {
 
 export const logout = async (req, res, next) => {
   try {
-    if (typeof req.cookies.sessionId === 'string') {
-      await logoutUser(req.cookies.sessionId);
+    const sessionId = req.cookies.sessionId;
+
+    if (typeof sessionId === 'string') {
+      await logoutUser(sessionId);
     }
 
     res.clearCookie('refreshToken');
@@ -64,12 +66,20 @@ export const logout = async (req, res, next) => {
 
     res.status(204).end();
   } catch (error) {
+    console.error('Logout error:', error);
     next(createHttpError(500, 'Failed to log out'));
   }
 };
 
+
 export const refresh = async (req, res, next) => {
   try {
+    console.log('Cookies:', req.cookies); 
+
+    if (!req.cookies.sessionId || !req.cookies.refreshToken) {
+      throw createHttpError(400, 'Session ID or Refresh Token missing');
+    }
+
     const session = await refreshUserSession(
       req.cookies.sessionId,
       req.cookies.refreshToken,
@@ -87,12 +97,12 @@ export const refresh = async (req, res, next) => {
 
     res.status(200).json({
       status: 200,
-      message: 'Refresh completed',
+      message: 'Successfully refreshed a session!',
       data: {
         accessToken: session.accessToken,
       },
     });
   } catch (error) {
-    next(createHttpError(500, 'Failed to refresh session'));
+    next(error);
   }
 };

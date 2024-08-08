@@ -1,5 +1,4 @@
 
-import Joi from 'joi';
 
 export const validateBody = (schema) => {
   return (req, res, next) => {

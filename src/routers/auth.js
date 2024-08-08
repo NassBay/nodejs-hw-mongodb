@@ -4,8 +4,13 @@ import { validateBody } from '../middlewares/validateBody.js';
 import { registerSchema, loginSchema } from '../validations/auth.js';
 import ctrlWrapper from '../utils/ctrlWrapper.js'
 
+
+
+
 const router = express.Router();
 const jsonParser = express.json();
+
+
 
 router.post(
   '/auth/register',

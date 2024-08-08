@@ -20,6 +20,7 @@ export const getContacts = async (req, res, next) => {
     } = req.query;
 
     const filter = {
+      userId: req.user._id,
       contactType: type,
       isFavourite: isFavourite === 'true',
     };
@@ -93,6 +94,7 @@ export const createContact = async (req, res, next) => {
       email,
       isFavourite,
       contactType,
+      userId: req.user._id,
     });
 
     res.status(201).json({

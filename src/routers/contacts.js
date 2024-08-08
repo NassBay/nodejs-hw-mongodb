@@ -8,12 +8,15 @@ import {
   updateContact,
   deleteContact,
 } from '../controllers/contacts.js';
+import { authenticate } from '../middlewares/authenticate.js';
 import ctrlWrapper from '../utils/ctrlWrapper.js';
 import { validateBody } from '../middlewares/validateBody.js';
 import { isValidId } from '../middlewares/isValidId.js';
 import { contactSchema, updateContactSchema } from '../validations/contacts.js';
 
 const router = Router();
+
+router.use(authenticate);
 
 router.get('/contacts', ctrlWrapper(getContacts));
 router.get('/contacts/:contactId', isValidId, ctrlWrapper(getContactByIdController));

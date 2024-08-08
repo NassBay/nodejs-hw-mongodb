@@ -5,6 +5,7 @@ import User from '../models/user.js';
 import Session from '../models/session.js';
 import { ACCESS_TOKEN_TTL, REFRESH_TOKEN_TTL } from '../constants/index.js';
 
+// Реєстрація користувача
 export const registerUserService = async ({ name, email, password }) => {
   const existingUser = await User.findOne({ email });
 
@@ -24,6 +25,7 @@ export const registerUserService = async ({ name, email, password }) => {
   return newUser;
 };
 
+// Логін користувача
 export const loginUser = async ({ email, password }) => {
   const user = await User.findOne({ email });
   if (!user) {
@@ -49,12 +51,40 @@ export const loginUser = async ({ email, password }) => {
   });
 };
 
+
 export const logoutUser = async (sessionId) => {
-  return Session.deleteOne({ _id: sessionId });
+  try {
+    const session = await Session.findByIdAndDelete(sessionId);
+
+    if (!session) {
+      throw createHttpError(404, 'Session not found');
+    }
+
+    return session;
+  } catch (error) {
+    console.error('Error in logoutUser:', error.message);
+    throw createHttpError(500, 'Failed to delete session');
+  }
 };
+
+
+
+const createSession = () => {
+  const accessToken = crypto.randomBytes(30).toString('base64');
+  const refreshToken = crypto.randomBytes(30).toString('base64');
+
+  return {
+    accessToken,
+    refreshToken,
+    accessTokenValidUntil: new Date(Date.now() + ACCESS_TOKEN_TTL),
+    refreshTokenValidUntil: new Date(Date.now() + REFRESH_TOKEN_TTL),
+  };
+};
+
 
 export const refreshUserSession = async (sessionId, refreshToken) => {
   const session = await Session.findOne({ _id: sessionId, refreshToken });
+
   if (!session) {
     throw createHttpError(401, 'Session not found');
   }
@@ -63,10 +93,9 @@ export const refreshUserSession = async (sessionId, refreshToken) => {
     throw createHttpError(401, 'Refresh token expired');
   }
 
-  await Session.deleteOne({ _id: session._id });
+  await Session.findByIdAndDelete(sessionId);
 
-  const accessToken = crypto.randomBytes(30).toString('base64');
-  const newRefreshToken = crypto.randomBytes(30).toString('base64');
+  const { accessToken, refreshToken: newRefreshToken } = createSession();
 
   return Session.create({
     userId: session.userId,
@@ -76,3 +105,4 @@ export const refreshUserSession = async (sessionId, refreshToken) => {
     refreshTokenValidUntil: new Date(Date.now() + REFRESH_TOKEN_TTL),
   });
 };
+
