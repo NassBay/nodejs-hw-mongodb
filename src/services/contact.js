@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import Contact from '../models/contact.js';
 
 export const getContactsPaginated = async (
@@ -13,6 +14,7 @@ export const getContactsPaginated = async (
     .skip(skip)
     .limit(perPage);
 
+  console.log('Contacts:', contacts);
   const totalItems = await Contact.countDocuments(filter);
   const totalPages = Math.ceil(totalItems / perPage);
   const hasPreviousPage = page > 1;
@@ -21,8 +23,8 @@ export const getContactsPaginated = async (
   return { contacts, totalItems, totalPages, hasPreviousPage, hasNextPage };
 };
 
-export const getContactById = async (id, userId) => {
-  return Contact.findOne({ _id: id, userId });
+export const getContactById = async (contactId, userId) => {
+  return Contact.findOne({ _id: contactId, userId: userId });
 };
 
 export const createNewContact = async (contactData) => {

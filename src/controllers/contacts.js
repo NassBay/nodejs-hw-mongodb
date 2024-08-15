@@ -1,4 +1,4 @@
-import createError from 'http-errors';
+import createHttpError from 'http-errors';
 import { contactSchema, updateContactSchema } from '../validations/contacts.js';
 import {
   getContactById,
@@ -21,8 +21,6 @@ export const getContacts = async (req, res, next) => {
 
     const filter = {
       userId: req.user._id,
-      contactType: type,
-      isFavourite: isFavourite === 'true',
     };
 
     if (isFavourite === undefined) {
@@ -51,21 +49,28 @@ export const getContacts = async (req, res, next) => {
 };
 
 export const getContactByIdController = async (req, res, next) => {
+  const { contactId } = req.params; 
+ const userId = req.user._id;
+
   try {
-    const contact = await getContactById(req.params.contactId);
+    const contact = await getContactById(contactId, userId);
+
     if (!contact) {
-      return next(createError(404, 'Contact not found'));
+      return next(
+        createHttpError(404, `Contact with id ${contactId} not found`),
+      );
     }
+
     res.status(200).json({
       status: 200,
-      message: `Successfully found contact with id ${req.params.contactId}!`,
+      message: `Successfully found contact with id ${contactId}!`,
       data: contact,
     });
   } catch (error) {
-    next(createError(500, 'Failed to retrieve contact'));
+    console.error('Error retrieving contact:', error);
+    next(createHttpError(500, 'Failed to retrieve contact'));
   }
 };
-
 
 
 export const createContact = async (req, res, next) => {
@@ -84,9 +89,7 @@ export const createContact = async (req, res, next) => {
       });
     }
 
-  
     const { name, phoneNumber, email, isFavourite, contactType } = req.body;
-
 
     const newContact = await createNewContact({
       name,
@@ -105,7 +108,9 @@ export const createContact = async (req, res, next) => {
   } catch (error) {
     next(createError(500, 'Failed to create contact'));
   }
-};export const updateContact = async (req, res, next) => {
+};
+
+export const updateContact = async (req, res, next) => {
   const { contactId } = req.params;
 
   try {
@@ -120,7 +125,11 @@ export const createContact = async (req, res, next) => {
       });
     }
 
-    const updatedContact = await updateContactById(contactId, req.body);
+    const updatedContact = await updateContactById(
+      contactId,
+      req.user._id,
+      req.body,
+    );
     if (!updatedContact) {
       return res.status(404).json({
         status: 404,
@@ -131,24 +140,18 @@ export const createContact = async (req, res, next) => {
 
     res.status(200).json({
       status: 200,
-      message: 'Successfully patched a contact!',
+      message: 'Successfully updated contact!',
       data: updatedContact,
     });
   } catch (error) {
-    next(
-      createError(500, {
-        status: 500,
-        message: 'Failed to update contact',
-        data: null,
-      }),
-    );
+    next(createError(500, 'Failed to update contact'));
   }
 };
 
 export const deleteContact = async (req, res, next) => {
   const { contactId } = req.params;
   try {
-    const deletedContact = await deleteContactById(contactId);
+    const deletedContact = await deleteContactById(contactId, req.user._id);
     if (!deletedContact) {
       return next(createError(404, 'Contact not found'));
     }

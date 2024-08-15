@@ -49,7 +49,11 @@ export const login = async (req, res, next) => {
       },
     });
   } catch (error) {
-    next(createHttpError(500, 'Failed to log in'));
+    if (error.status === 401 || error.status === 404) {
+      next(error);
+    } else {
+      next(createHttpError(500, 'Failed to log in'));
+    }
   }
 };
 
