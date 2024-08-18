@@ -1,5 +1,6 @@
-import mongoose from 'mongoose';
+
 import Contact from '../models/contact.js';
+import User from '../models/user.js';
 
 export const getContactsPaginated = async (
   page,
@@ -41,4 +42,8 @@ export const updateContactById = async (id, userId, updateData) => {
 
 export const deleteContactById = async (id, userId) => {
   return Contact.findOneAndDelete({ _id: id, userId });
+};
+
+export const changeUserPhoto = async (userId, photo) => {
+  return User.findByIdAndUpdate(userId, { photo: photo });
 };

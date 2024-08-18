@@ -13,12 +13,13 @@ export const contactSchema = Joi.object({
     'string.max': 'Phone number should be no longer than {#limit} characters',
     'any.required': 'Phone number is required',
   }),
-    email: Joi.string().email().min(3).max(20).messages({
+  email: Joi.string().email().min(3).max(30).messages({
     'string.base': 'Email should be a string',
     'string.email': 'Email is not valid',
     'string.min': 'Email should be at least {#limit} characters',
     'string.max': 'Email should be no longer than {#limit} characters',
   }),
+  photo: Joi.string(),
   isFavourite: Joi.boolean(),
   contactType: Joi.string()
     .valid('work', 'home', 'personal')
@@ -39,11 +40,12 @@ export const updateContactSchema = Joi.object({
     'string.min': 'Phone number should be at least {#limit} characters',
     'string.max': 'Phone number should be no longer than {#limit} characters',
   }),
-  email: Joi.string().email().min(3).max(20).messages({
+  email: Joi.string().email().min(3).max(30).messages({
     'string.email': 'Email is not valid',
     'string.min': 'Email should be at least {#limit} characters',
     'string.max': 'Email should be no longer than {#limit} characters',
   }),
+  photo: Joi.string(),
   isFavourite: Joi.boolean(),
   contactType: Joi.string().valid('work', 'home', 'personal').messages({
     'any.only': 'Contact type must be one of: work, home, personal',

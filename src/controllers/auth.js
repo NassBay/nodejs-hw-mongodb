@@ -4,7 +4,10 @@ import {
   loginUser,
   logoutUser,
   refreshUserSession,
+  handleResetPassword,
+  handleResetEmail,
 } from '../services/auth.js';
+
 
 export const register = async (req, res, next) => {
   const { name, email, password } = req.body;
@@ -75,10 +78,9 @@ export const logout = async (req, res, next) => {
   }
 };
 
-
 export const refresh = async (req, res, next) => {
   try {
-    console.log('Cookies:', req.cookies); 
+    console.log('Cookies:', req.cookies);
 
     if (!req.cookies.sessionId || !req.cookies.refreshToken) {
       throw createHttpError(400, 'Session ID or Refresh Token missing');
@@ -110,3 +112,30 @@ export const refresh = async (req, res, next) => {
     next(error);
   }
 };
+
+export const sendResetEmail = async (req, res, next) => {
+  try {
+    await handleResetEmail(req.body.email);
+    res.status(200).json({
+      status: 200,
+      message: 'Reset password email has been successfully sent.',
+      data: {},
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const resetPassword = async (req, res) => {
+  const { password, token } = req.body;
+
+ await handleResetPassword(password, token);
+
+  res.send({
+    status: 200,
+    message: 'Password reset successfully',
+    data: {},
+  });
+};
+
+
