@@ -49,7 +49,7 @@ router.post(
 );
 
 router.post(
-  '/auth/reset-password',
+  '/auth/reset-pwd',
   validateBody(resetPasswordSchema),
   ctrlWrapper(resetPassword),
 );
