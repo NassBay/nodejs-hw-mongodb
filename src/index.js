@@ -5,6 +5,7 @@ import initMongoConnection from './db/initMongoConnection.js';
 import './models/contact.js'; 
 
 
+
 dotenv.config();
 
 const startServer = async () => {
@@ -14,6 +15,7 @@ const startServer = async () => {
 
     
     const app = setupServer();
+   
 
    
     const PORT = process.env.PORT || 3000;

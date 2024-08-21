@@ -1,4 +1,7 @@
 import express from 'express';
+import swaggerUi from 'swagger-ui-express';
+import fs from 'fs';
+import path from 'path';
 import cors from 'cors';
 import pino from 'pino';
 import pinoHttp from 'pino-http';
@@ -9,6 +12,9 @@ import authRouter from './routers/auth.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 import { notFoundHandler } from './middlewares/notFoundHandler.js';
 
+const swaggerDocument = JSON.parse(
+  fs.readFileSync(path.resolve('./docs/swagger.json'), 'utf8'),
+);
 const setupServer = () => {
   const app = express();
 
@@ -18,9 +24,9 @@ const setupServer = () => {
 
   const logger = pino(pretty());
   app.use(pinoHttp({ logger }));
-
-  app.use(authRouter); 
-  app.use(contactsRouter); 
+  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+  app.use(authRouter);
+  app.use(contactsRouter);
 
   app.get('/', (req, res) => {
     res.status(200).json({ message: 'Welcome to the DB' });
@@ -28,6 +34,7 @@ const setupServer = () => {
 
   app.use(notFoundHandler);
   app.use(errorHandler);
+  
 
   return app;
 };
