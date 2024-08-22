@@ -7,7 +7,7 @@ security:
   - bearerAuth: []
 requestBody:
   content:
-    application/json:
+    multipart/form-data:
       schema:
         type: object
         required:
@@ -27,7 +27,7 @@ requestBody:
             description: "Contact's email"
             type: string
             example: johnshow@gmail.com
-          isFavourite:
+          isFavorite:
             description: 'Important contact'
             type: boolean
             example: false
