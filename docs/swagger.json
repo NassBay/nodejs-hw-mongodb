@@ -165,7 +165,7 @@
         ],
         "requestBody": {
           "content": {
-            "application/json": {
+            "multipart/form-data": {
               "schema": {
                 "type": "object",
                 "properties": {
@@ -184,7 +184,7 @@
                     "type": "string",
                     "example": "johnshow@gmail.com"
                   },
-                  "isFavourite": {
+                  "isFavorite": {
                     "description": "Important contact",
                     "type": "boolean",
                     "example": false,
@@ -264,7 +264,7 @@
         ],
         "requestBody": {
           "content": {
-            "application/json": {
+            "multipart/form-data": {
               "schema": {
                 "type": "object",
                 "required": [
@@ -288,7 +288,7 @@
                     "type": "string",
                     "example": "johnshow@gmail.com"
                   },
-                  "isFavourite": {
+                  "isFavorite": {
                     "description": "Important contact",
                     "type": "boolean",
                     "example": false,
@@ -414,7 +414,7 @@
           },
           {
             "in": "query",
-            "name": "isFavourite",
+            "name": "isFavorite",
             "schema": {
               "type": "boolean",
               "example": false
